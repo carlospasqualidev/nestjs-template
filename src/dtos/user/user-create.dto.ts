@@ -18,7 +18,4 @@ export class UserCreateDTO {
   @IsString()
   @IsNotEmpty({ message: 'A senha é obrigatória' })
   password: string;
-  @IsString()
-  @IsNotEmpty({ message: 'DIABO E NECESSARIO' })
-  diabo: string;
 }
