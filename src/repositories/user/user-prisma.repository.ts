@@ -5,21 +5,15 @@ import { IUserRepository } from './user-repository.interface';
 
 @Injectable()
 export class UserPrismaRepository implements IUserRepository {
-  private readonly prisma = new Prisma();
-
-  constructor() {
-    this.prisma = new Prisma();
-  }
-
   async create(data: UserEntity): Promise<UserEntity> {
-    const user = await this.prisma.user.create({
+    const user = await Prisma.user.create({
       data,
     });
     return user;
   }
 
   async findById(id: string): Promise<UserEntity> {
-    const user = this.prisma.user.findUnique({
+    const user = Prisma.user.findUnique({
       where: {
         id,
       },
@@ -28,7 +22,7 @@ export class UserPrismaRepository implements IUserRepository {
   }
 
   async findByEmail(email: string): Promise<any> {
-    const user = this.prisma.user.findUnique({
+    const user = Prisma.user.findUnique({
       where: {
         email,
       },
@@ -37,7 +31,7 @@ export class UserPrismaRepository implements IUserRepository {
   }
 
   async update(data: UserEntity): Promise<UserEntity> {
-    const user = await this.prisma.user.update({
+    const user = await Prisma.user.update({
       data,
       where: {
         id: data.id,
