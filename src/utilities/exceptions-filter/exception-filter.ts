@@ -5,7 +5,9 @@ import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
+
 import { HttpAdapterHost } from '@nestjs/core';
+import { IErrorMessage } from './expection-filter.interface';
 
 @Catch()
 export class ExceptionsFilter implements ExceptionFilter {
@@ -16,24 +18,24 @@ export class ExceptionsFilter implements ExceptionFilter {
 
     const ctx = host.switchToHttp();
 
-    if (exception instanceof HttpException) {
-    }
+    const isHttpException = exception instanceof HttpException;
 
-    const httpStatus =
-      exception instanceof HttpException
-        ? exception.getStatus()
-        : HttpStatus.INTERNAL_SERVER_ERROR;
-
-    const responseBody = {
-      statusCode: httpStatus,
-      timestamp: new Date().toISOString(),
-      message: exception instanceof HttpException && exception.message,
+    let responseBody = {
+      message: 'Oops! Encontramos um problema e nossa equipe foi notificada.',
+      error: 'Internal Server Error',
+      statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
     };
 
-    httpAdapter.reply(ctx.getResponse(), responseBody, httpStatus);
+    if (isHttpException) {
+      responseBody = exception.getResponse() as IErrorMessage;
+    } else {
+      this.showMessage(exception);
+    }
+
+    httpAdapter.reply(ctx.getResponse(), responseBody, responseBody.statusCode);
   }
 
-  consoleMessage(exception: unknown) {
+  showMessage(exception: unknown) {
     const errorMessage = `
   ❌ Error ❌ - ${new Date()}
       
