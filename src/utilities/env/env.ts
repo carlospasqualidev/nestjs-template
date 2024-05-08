@@ -5,7 +5,8 @@ type envVars =
   | 'PROJECT_DESCRIPTION'
   | 'ENVIRONMENT'
   | 'DATABASE_URL'
-  | 'CORS_ORIGIN';
+  | 'CORS_ORIGIN'
+  | 'LOG_SERVER_URL';
 
 class EnvCore {
   public get(key: envVars): any {
@@ -16,4 +17,4 @@ class EnvCore {
   }
 }
 
-export const Env = new EnvCore();
+export const env = new EnvCore();

@@ -1,4 +1,4 @@
-class dateTimeAdd {
+class DateTimeAdd {
   private date: Date;
 
   constructor(date: Date) {
@@ -31,7 +31,7 @@ class dateTimeAdd {
   }
 }
 
-class dateTimeRemove {
+class DateTimeRemove {
   private date: Date;
 
   constructor(date: Date) {
@@ -64,7 +64,7 @@ class dateTimeRemove {
   }
 }
 
-class dateTimeFormat {
+class DateTimeFormat {
   private dateParam: Date;
 
   constructor(date: Date) {
@@ -72,28 +72,25 @@ class dateTimeFormat {
   }
 
   public date() {
-    this.dateParam.toLocaleDateString('pt-BR');
-    return this.dateParam;
+    return this.dateParam.toLocaleDateString('pt-BR');
   }
 
   public dateAndTime() {
-    this.dateParam.toLocaleString('pt-BR');
-    return this.dateParam;
+    return this.dateParam.toLocaleString('pt-BR');
   }
 
   public time() {
-    this.dateParam.toLocaleTimeString('pt-BR');
-    return this.dateParam;
+    return this.dateParam.toLocaleTimeString('pt-BR');
   }
 }
 
-class dateTimeSet {
+class DateTimeSet {
   private date: Date;
-  private add: dateTimeAdd;
+  private add: DateTimeAdd;
 
   constructor(date: Date) {
     this.date = date;
-    this.add = new dateTimeAdd(date);
+    this.add = new DateTimeAdd(date);
   }
 
   public utcMidnight() {
@@ -109,8 +106,8 @@ class dateTimeSet {
 }
 
 export const dateTime = {
-  add: (date: Date) => new dateTimeAdd(date),
-  remove: (date: Date) => new dateTimeRemove(date),
-  format: (date: Date) => new dateTimeFormat(date),
-  set: (date: Date) => new dateTimeSet(date),
+  add: (date: Date) => new DateTimeAdd(date),
+  remove: (date: Date) => new DateTimeRemove(date),
+  format: (date: Date) => new DateTimeFormat(date),
+  set: (date: Date) => new DateTimeSet(date),
 };

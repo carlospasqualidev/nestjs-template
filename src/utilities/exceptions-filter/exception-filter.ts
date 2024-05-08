@@ -8,6 +8,8 @@ import {
 
 import { HttpAdapterHost } from '@nestjs/core';
 import { IErrorMessage } from './expection-filter.interface';
+import { dateTime } from '../date-time';
+import { env } from '../env';
 
 @Catch()
 export class ExceptionsFilter implements ExceptionFilter {
@@ -16,7 +18,7 @@ export class ExceptionsFilter implements ExceptionFilter {
   catch(exception: unknown, host: ArgumentsHost): void {
     const { httpAdapter } = this.httpAdapterHost;
 
-    const ctx = host.switchToHttp();
+    const { getRequest, getResponse } = host.switchToHttp();
 
     const isHttpException = exception instanceof HttpException;
 
@@ -29,20 +31,54 @@ export class ExceptionsFilter implements ExceptionFilter {
     if (isHttpException) {
       responseBody = exception.getResponse() as IErrorMessage;
     } else {
-      this.showMessage(exception);
+      this.showMessage(exception, getRequest());
     }
 
-    httpAdapter.reply(ctx.getResponse(), responseBody, responseBody.statusCode);
+    httpAdapter.reply(getResponse(), responseBody, responseBody.statusCode);
   }
 
-  showMessage(exception: unknown) {
-    const errorMessage = `
-  ❌ Error ❌ - ${new Date()}
-      
-      
-  ${exception}
-  `;
+  showMessage(exception: unknown, request: any) {
+    const { url, method, headers, body, query, params } = request;
 
-    console.log(errorMessage);
+    //#region MOUNT MESSAGE
+    const requestInfo = `
+📌 REQUEST INFO 📌
+
+URL: ${method} - ${url} 
+HEADERS: ${JSON.stringify(headers)}
+BODY: ${JSON.stringify(body)}
+QUERY: ${JSON.stringify(query)}
+PARAMS: ${JSON.stringify(params)}
+`;
+    const errorMessage = `
+❌ ERROR ❌ - ${dateTime.format(new Date()).dateAndTime()}
+        
+${exception}`;
+
+    const message = `
+    ${errorMessage}
+    ${requestInfo}`;
+    //#endregion
+
+    console.log(message);
+    this.sendError(errorMessage, requestInfo);
+  }
+
+  sendError(errorStack: string, extraInfo: any) {
+    if (!['Sandbox', 'Production'].includes(env.get('ENVIRONMENT'))) return;
+
+    fetch(env.get('LOG_SERVER_URL')!, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        projectName: process.env.PROJECT_NAME,
+        environment: process.env.ENVIRONMENT,
+        side: 'Server',
+        errorStack,
+        extraInfo,
+      }),
+    });
   }
 }
