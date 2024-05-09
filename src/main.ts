@@ -14,7 +14,8 @@ import metadata from './metadata';
 
 import { AppModule } from './modules';
 import { env } from './utilities/env';
-import { ExceptionsFilter } from './utilities/exceptions-filter';
+import { ExceptionsFilter } from './utilities/exception-filter';
+import { TrimPipe } from './utilities/pipes';
 
 async function configureApi() {
   const app = await NestFactory.create<NestFastifyApplication>(
@@ -28,6 +29,7 @@ async function configureApi() {
 
   //#REGION VALIDATION PIPE FOR CLASS VALIDATOR
   app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(new TrimPipe());
   //#ENDREGION
 
   return app;

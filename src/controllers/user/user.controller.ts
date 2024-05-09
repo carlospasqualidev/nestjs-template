@@ -12,8 +12,9 @@ export class UserController {
   private readonly createProjectUseCase: UserCreateUseCase;
 
   @Post('/create')
-  async Create(@Body() data: UserCreateDTO): Promise<UserEntity> {
-    return this.createProjectUseCase.execute(data);
+  async Create(@Body() data: any): Promise<UserEntity> {
+    // return this.createProjectUseCase.execute(data);
+    return data;
   }
 
   @Post('/update')
