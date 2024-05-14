@@ -6,7 +6,8 @@ type envVars =
   | 'ENVIRONMENT'
   | 'DATABASE_URL'
   | 'CORS_ORIGIN'
-  | 'LOG_SERVER_URL';
+  | 'LOG_SERVER_URL'
+  | 'JWT_SECRET';
 
 class EnvCore {
   public get(key: envVars): any {

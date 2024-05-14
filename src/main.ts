@@ -12,7 +12,7 @@ import fastifyCsrf from '@fastify/csrf-protection';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import metadata from './metadata';
 
-import { AppModule } from './modules';
+import { AppModule } from './modules/app.module';
 import { env } from './utilities/env';
 import { ExceptionsFilter } from './utilities/exception-filter';
 import { TrimPipe } from './utilities/pipes';
@@ -40,6 +40,13 @@ async function configureSwagger(app: NestFastifyApplication) {
     .setTitle(env.get('PROJECT_NAME'))
     .setDescription(env.get('PROJECT_DESCRIPTION'))
     .setVersion(env.get('PROJECT_VERSION'))
+    .addBearerAuth({
+      type: 'apiKey',
+      bearerFormat: 'JWT',
+      name: 'Authorization',
+      scheme: 'bearer',
+      in: 'header',
+    })
     .build();
 
   await SwaggerModule.loadPluginMetadata(metadata);

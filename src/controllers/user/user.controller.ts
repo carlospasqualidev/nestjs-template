@@ -11,10 +11,10 @@ export class UserController {
   @Inject(UserCreateUseCase)
   private readonly createProjectUseCase: UserCreateUseCase;
 
-  @Post('/create')
+  @Post('/diabo')
   async Create(@Body() data: any): Promise<UserEntity> {
-    // return this.createProjectUseCase.execute(data);
-    return data;
+    return this.createProjectUseCase.execute(data);
+    // return data;
   }
 
   @Post('/update')

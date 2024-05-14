@@ -1,1 +1,1 @@
-export { Cryptography } from './cryptography';
+export { cryptography } from './cryptography';

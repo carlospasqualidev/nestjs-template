@@ -25,6 +25,11 @@ export class TrimPipe implements PipeTransform {
     if (metadata.type === 'param') return data;
 
     for (const key in data) {
+      if (this.isString(data[key])) {
+        data[key] = this.trimString(data[key]);
+        continue;
+      }
+
       if (this.isObject(data[key])) {
         data[key] = this.process(data[key], metadata);
         continue;
@@ -32,11 +37,6 @@ export class TrimPipe implements PipeTransform {
 
       if (this.isArray(data[key])) {
         data[key] = data[key].map((item: any) => this.process(item, metadata));
-        continue;
-      }
-
-      if (this.isString(data[key])) {
-        data[key] = this.trimString(data[key]);
         continue;
       }
     }

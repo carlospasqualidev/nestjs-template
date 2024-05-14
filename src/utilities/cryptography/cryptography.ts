@@ -1,6 +1,6 @@
 import { compare, hashSync } from 'bcrypt';
 
-class CryptographyCore {
+export class Cryptography {
   async hashPassword(password: string): Promise<string> {
     return hashSync(password, 12);
   }
@@ -10,4 +10,4 @@ class CryptographyCore {
   }
 }
 
-export const Cryptography = new CryptographyCore();
+export const cryptography = new Cryptography();

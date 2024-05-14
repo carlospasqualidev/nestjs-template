@@ -6,6 +6,7 @@
     "deleteOutDir": true,
     "builder": "swc",
     "typeCheck": true,
+
     "plugins": ["@nestjs/swagger"]
   }
 }
