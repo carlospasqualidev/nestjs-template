@@ -1,23 +1,23 @@
-import { Body, Controller, Inject, Post } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Inject, Post, Put } from '@nestjs/common';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { UserCreateDTO } from 'src/dtos/user';
 
 import { UserEntity } from 'src/entities/user.entity';
 import { UserCreateUseCase } from 'src/use-cases/user';
 
-@ApiTags('Users')
+@ApiTags('User')
+@ApiBearerAuth()
 @Controller()
 export class UserController {
   @Inject(UserCreateUseCase)
   private readonly createProjectUseCase: UserCreateUseCase;
 
-  @Post('/diabo')
-  async Create(@Body() data: any): Promise<UserEntity> {
+  @Post()
+  async Create(@Body() data: UserCreateDTO): Promise<UserEntity> {
     return this.createProjectUseCase.execute(data);
-    // return data;
   }
 
-  @Post('/update')
+  @Put()
   async Update(@Body() data: UserCreateDTO): Promise<UserEntity> {
     return this.createProjectUseCase.execute(data);
   }

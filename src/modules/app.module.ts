@@ -9,7 +9,7 @@ import { AuthenticationModule } from './authentication.module';
     UserModule,
     RouterModule.register([
       {
-        path: 'authentication',
+        path: 'auth',
         module: AuthenticationModule,
       },
     ]),
