@@ -1,18 +1,27 @@
-import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
+import { CanActivate, ExecutionContext, Type } from '@nestjs/common';
 import { jwt } from '../jwt';
 
-@Injectable()
-export class AuthGuard implements CanActivate {
-  canActivate(context: ExecutionContext): boolean {
-    const request = context.switchToHttp().getRequest();
+export function AuthGuard(...permissions: string[]): Type<CanActivate> {
+  class AuthGuardClass implements CanActivate {
+    canActivate(context: ExecutionContext): boolean {
+      const request = context.switchToHttp().getRequest();
 
-    const token = jwt.extractTokenFromHeader(request);
+      try {
+        const token = jwt.extractTokenFromHeader(request);
+        jwt.verify(token);
 
-    try {
-      jwt.verify(token);
-      return true;
-    } catch (error) {
-      return false;
+        const userPermissions = ['admin', 'user'];
+
+        const hasPermission = permissions.every((permission) =>
+          userPermissions.includes(permission),
+        );
+
+        return hasPermission;
+      } catch (error) {
+        return false;
+      }
     }
   }
+
+  return AuthGuardClass;
 }
