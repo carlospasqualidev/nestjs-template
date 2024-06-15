@@ -1,6 +1,6 @@
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { AuthenticationDTO } from 'src/dtos/authentication';
-import { UserEntity } from 'src/entities';
+import { UserEntity } from 'src/entities/user';
 import { UserRepository } from 'src/repositories/user';
 import { cryptography } from 'src/utilities/cryptography';
 import { jwt } from 'src/utilities/jwt/jwt';

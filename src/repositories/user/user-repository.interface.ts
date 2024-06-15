@@ -1,6 +1,6 @@
-import { UserEntity } from 'src/entities';
+import { UserEntity } from 'src/entities/user';
 
-export interface IUserRepositoryFindOptions {
+export interface IFindOptions {
   validate: boolean;
 }
 
@@ -12,13 +12,10 @@ export interface IUpdateRefreshToken {
 export interface IUserRepository {
   create(user: UserEntity): Promise<UserEntity>;
 
-  findById(
-    id: string,
-    options?: IUserRepositoryFindOptions,
-  ): Promise<UserEntity | null>;
+  findById(id: string, options?: IFindOptions): Promise<UserEntity | null>;
   findByEmail(
     email: string,
-    options?: IUserRepositoryFindOptions,
+    options?: IFindOptions,
   ): Promise<UserEntity | null>;
 
   update(user: UserEntity): Promise<UserEntity>;

@@ -2,7 +2,7 @@ import { Body, Controller, Inject, Post, Put, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { UserCreateDTO } from 'src/dtos/user';
 
-import { UserEntity } from 'src/entities/user.entity';
+import { UserEntity } from 'src/entities/user/user.entity';
 import { UserCreateUseCase } from 'src/use-cases/user';
 import { AuthGuard } from 'src/utilities/guards/authGuard';
 

@@ -1,9 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { UserEntity } from 'src/entities/user.entity';
+import { UserEntity } from 'src/entities/user';
 import {
   IUpdateRefreshToken,
   IUserRepository,
-  IUserRepositoryFindOptions,
+  IFindOptions,
 } from './user-repository.interface';
 import { prisma } from 'src/utilities/database';
 
@@ -21,7 +21,7 @@ export class UserRepository implements IUserRepository {
   //#region FIND
   async findById(
     id: string,
-    options: IUserRepositoryFindOptions = { validate: true },
+    options: IFindOptions = { validate: true },
   ): Promise<UserEntity | undefined> {
     const user = await prisma.user.findUnique({
       where: {
@@ -35,10 +35,7 @@ export class UserRepository implements IUserRepository {
     return user;
   }
 
-  async findByEmail(
-    email: string,
-    options: IUserRepositoryFindOptions = { validate: true },
-  ) {
+  async findByEmail(email: string, options: IFindOptions = { validate: true }) {
     const user = await prisma.user.findUnique({
       where: {
         email,
