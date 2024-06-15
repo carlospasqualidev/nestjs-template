@@ -12,7 +12,6 @@ export interface IUpdateRefreshToken {
 
 export interface IUserRepository {
   create(user: UserEntity): Promise<UserEntity>;
-
   findById(id: string, options?: IFindOptions): Promise<UserEntity | null>;
   findByEmail(
     email: string,

@@ -26,7 +26,7 @@ export class AuthenticationLoginUseCase {
     const accessToken = jwt.signAccessToken(payload);
     await this.handleRefreshToken(user, payload);
 
-    return { accessToken };
+    return { accessToken: `Bearer ${accessToken}` };
   }
 
   private async checkPasswordMatch(password: string, user: UserEntity) {

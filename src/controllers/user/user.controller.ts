@@ -41,22 +41,22 @@ export class UserController {
   private readonly userDeleteByIdUseCase: UserDeleteByIdUseCase;
 
   @Post()
-  async Create(@Body() data: UserCreateDTO): Promise<UserEntity> {
-    return this.userCreateUseCase.execute(data);
+  async Create(@Body() dto: UserCreateDTO): Promise<UserEntity> {
+    return this.userCreateUseCase.execute(dto);
   }
 
   @Put()
-  async Update(@Body() data: UserUpdateDTO): Promise<UserEntity> {
-    return this.userUpdateUseCase.execute(data);
+  async Update(@Body() dto: UserUpdateDTO): Promise<UserEntity> {
+    return this.userUpdateUseCase.execute(dto);
   }
 
   @Get(':id')
-  async findById(@Param() data: UserFindByIdDTO): Promise<UserEntity> {
-    return this.userFindByIdUseCase.execute(data);
+  async FindById(@Param() dto: UserFindByIdDTO): Promise<UserEntity> {
+    return this.userFindByIdUseCase.execute(dto);
   }
 
   @Delete(':id')
-  async deleteById(@Param() data: UserDeleteByIdDTO): Promise<void> {
-    return this.userDeleteByIdUseCase.execute(data);
+  async DeleteById(@Param() dto: UserDeleteByIdDTO): Promise<void> {
+    return this.userDeleteByIdUseCase.execute(dto);
   }
 }

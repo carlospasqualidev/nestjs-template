@@ -21,6 +21,8 @@ export class UserPermissionRepository implements IUserPermissionRepository {
     permission: UserPermissionEntity,
   ): Promise<UserPermissionEntity> {
     await this.userRepository.findById(permission.userId);
+    await this.validatePermission(permission.permission);
+    await this.checkPermissionAlreadyExists(permission);
 
     const userPermission = await prisma.userPermission.create({
       data: permission,
@@ -75,14 +77,15 @@ export class UserPermissionRepository implements IUserPermissionRepository {
   //#endregion
 
   //#region DELETE
-  async delete(userPermissionId: string): Promise<void> {
-    await this.findById(userPermissionId);
+  async delete(id: string): Promise<void> {
+    await this.findById(id);
 
     await prisma.userPermission.delete({
       where: {
-        id: userPermissionId,
+        id,
       },
     });
   }
+
   //#endregion
 }

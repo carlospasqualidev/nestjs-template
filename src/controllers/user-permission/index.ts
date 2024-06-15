@@ -1,1 +1,1 @@
-export { UserPermissionController } from './user-permission';
+export { UserPermissionController } from './user-permission.controller';
