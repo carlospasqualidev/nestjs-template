@@ -1,5 +1,5 @@
 import {
-  EnumPermissions,
+  // EnumPermissions,
   UserPermissionEntity,
 } from 'src/entities/user-permission';
 import {
@@ -9,6 +9,7 @@ import {
 import { prisma } from 'src/utilities/database';
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { UserRepository } from '../user/user.repository';
+import { $Enums } from '@prisma/client';
 
 @Injectable()
 export class UserPermissionRepository implements IUserPermissionRepository {
@@ -48,8 +49,8 @@ export class UserPermissionRepository implements IUserPermissionRepository {
     return permission;
   }
 
-  async validadePermission(permission: EnumPermissions): Promise<void> {
-    if (!Object.values(EnumPermissions).includes(permission))
+  async validatePermission(permission: $Enums.Permissions): Promise<void> {
+    if (!Object.values($Enums.Permissions).includes(permission))
       throw new NotFoundException('Permissão inválida.');
   }
 

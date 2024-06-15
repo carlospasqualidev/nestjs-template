@@ -1,3 +1,4 @@
+import { UserUpdateDTO } from 'src/dtos/user';
 import { UserEntity } from 'src/entities/user';
 
 export interface IFindOptions {
@@ -17,7 +18,6 @@ export interface IUserRepository {
     email: string,
     options?: IFindOptions,
   ): Promise<UserEntity | null>;
-
-  update(user: UserEntity): Promise<UserEntity>;
+  update(user: UserUpdateDTO): Promise<UserEntity>;
   updateRefreshToken(data: IUpdateRefreshToken): Promise<void>;
 }

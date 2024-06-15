@@ -1,9 +1,10 @@
-import { TPermissions } from './user-permission.interface';
+import { $Enums } from '@prisma/client';
+// import { EnumPermissions } from './user-permission.interface';
 
 export class UserPermissionEntity {
   id?: string;
+  permission: $Enums.Permissions;
   userId: string;
-  permission: TPermissions;
   createdAt?: Date;
   updatedAt?: Date;
 

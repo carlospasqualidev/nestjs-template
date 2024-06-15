@@ -1,5 +1,6 @@
+import { $Enums } from '@prisma/client';
 import {
-  EnumPermissions,
+  // EnumPermissions,
   UserPermissionEntity,
 } from 'src/entities/user-permission';
 
@@ -19,7 +20,7 @@ export interface IUserPermissionRepository {
     permission: UserPermissionEntity,
   ): Promise<UserPermissionEntity>;
 
-  validatePermission(permission: EnumPermissions): Promise<void>;
+  validatePermission(permission: $Enums.Permissions): Promise<void>;
 
   delete(userPermissionId: string): Promise<void>;
 }

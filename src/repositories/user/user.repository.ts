@@ -6,13 +6,20 @@ import {
   IFindOptions,
 } from './user-repository.interface';
 import { prisma } from 'src/utilities/database';
+import { UserUpdateDTO } from 'src/dtos/user';
+import { cryptography } from 'src/utilities/cryptography';
 
 @Injectable()
 export class UserRepository implements IUserRepository {
   //#region CREATE
   async create(data: UserEntity): Promise<UserEntity> {
+    const password = await cryptography.hashPassword(data.password);
+
     const user = await prisma.user.create({
-      data,
+      data: {
+        ...data,
+        password,
+      },
     });
     return user;
   }
@@ -50,7 +57,7 @@ export class UserRepository implements IUserRepository {
   //#endregion
 
   //#region UPDATE
-  async update(data: UserEntity): Promise<UserEntity> {
+  async update(data: UserUpdateDTO): Promise<UserEntity> {
     const user = await prisma.user.update({
       data,
       where: {
@@ -60,6 +67,7 @@ export class UserRepository implements IUserRepository {
 
     return user;
   }
+
   async updateRefreshToken({
     userId,
     refreshToken,

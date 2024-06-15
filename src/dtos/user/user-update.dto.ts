@@ -1,7 +1,12 @@
-import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsOptional, IsEmail, IsNotEmpty } from 'class-validator';
 
 export class UserUpdateDTO {
+  @IsString({
+    message: 'O id deve ser uma string',
+  })
+  @IsNotEmpty({ message: 'O id é obrigatório' })
+  id: string;
+
   @IsString({
     message: 'O nome deve ser uma string',
   })
@@ -15,12 +20,4 @@ export class UserUpdateDTO {
   @IsString()
   @IsOptional()
   image?: string | null;
-
-  @ApiProperty({
-    description: `A list of user's roles`,
-    example: ['admin'],
-  })
-  @IsString()
-  @IsNotEmpty({ message: 'A senha é obrigatória' })
-  password: string;
 }

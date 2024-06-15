@@ -10,11 +10,8 @@ export class UserCreateUseCase {
   private readonly userRepository: UserRepository;
 
   public async execute(data: UserCreateDTO) {
-    // await this.userRepository.findByEmail('fasfas');
-
     const user = new UserEntity(data);
 
-    // return this.userRepository.create(user);
-    return user;
+    return this.userRepository.create(user);
   }
 }
