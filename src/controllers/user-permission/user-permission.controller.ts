@@ -18,7 +18,7 @@ import {
   UserPermissionCreateUseCase,
   UserPermissionDeleteByIdUseCase,
 } from 'src/use-cases/user-permission';
-import { AuthGuard } from 'src/utilities/guards/authGuard';
+import { AuthGuard } from 'src/utilities/guards';
 
 @ApiTags('User Permissions')
 @ApiBearerAuth()

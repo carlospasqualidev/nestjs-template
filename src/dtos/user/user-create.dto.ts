@@ -2,20 +2,22 @@ import { IsString, IsOptional, IsEmail, IsNotEmpty } from 'class-validator';
 
 export class UserCreateDTO {
   @IsString({
-    message: 'O nome deve ser uma string',
+    message: 'O nome deve ser uma string.',
   })
-  @IsNotEmpty({ message: 'O nome é obrigatório' })
+  @IsNotEmpty({ message: 'O nome é obrigatório.' })
   name: string;
 
-  @IsString()
-  @IsEmail()
+  @IsString({
+    message: 'O e-mail deve ser uma string.',
+  })
+  @IsEmail({}, { message: 'O e-mail deve ser válido.' })
   email: string;
 
-  @IsString()
+  @IsString({ message: 'A imagem deve ser uma url do tipo string.' })
   @IsOptional()
   image?: string | null;
 
-  @IsString()
-  @IsNotEmpty({ message: 'A senha é obrigatória' })
+  @IsString({ message: 'A senha deve ser uma string.' })
+  @IsNotEmpty({ message: 'A senha é obrigatória.' })
   password: string;
 }

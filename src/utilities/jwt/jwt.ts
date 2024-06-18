@@ -2,6 +2,7 @@ import { JwtService } from '@nestjs/jwt';
 import { env } from '../env';
 import { FastifyRequest } from 'fastify';
 import { UnauthorizedException } from '@nestjs/common';
+import { IToken } from './jwt.interface';
 
 export class Jwt {
   private readonly jwtService: JwtService = new JwtService();
@@ -14,33 +15,33 @@ export class Jwt {
     return this.sign(payload, '30d');
   }
 
-  public verify(token: string): string {
+  public verify(token: string): IToken {
     try {
       this.jwtService.verify(token, {
         secret: env.get('JWT_SECRET'),
       });
     } catch (error) {
-      throw new UnauthorizedException('Token inválido');
+      throw new UnauthorizedException('Token inválido.');
     }
 
     return this.decode(token);
   }
 
-  public decode(token: string): any {
-    const payload = this.jwtService.decode(token);
+  public decode(token: string): IToken {
+    const payload = this.jwtService.decode(token) as IToken;
 
-    if (!payload) {
-      throw new UnauthorizedException('Token inválido');
+    if (!payload || !payload.user || !payload.user.id) {
+      throw new UnauthorizedException('Token inválido.');
     }
 
-    return this.jwtService.decode(token);
+    return payload;
   }
 
   public extractTokenFromHeader(request: FastifyRequest): string | undefined {
     const authorization = request.headers.authorization;
 
     if (!authorization) {
-      throw new UnauthorizedException('Header de autorização não encontrado');
+      throw new UnauthorizedException('Header de autorização não encontrado.');
     }
 
     const [type, token] = authorization?.split(' ') ?? [];

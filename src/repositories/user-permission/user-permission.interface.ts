@@ -16,6 +16,8 @@ export interface IUserPermissionRepository {
     options?: IFindOptions,
   ): Promise<UserPermissionEntity | null>;
 
+  findManyByUserId(id: string): Promise<$Enums.Permissions[]>;
+
   checkPermissionAlreadyExists(
     permission: UserPermissionEntity,
   ): Promise<UserPermissionEntity>;

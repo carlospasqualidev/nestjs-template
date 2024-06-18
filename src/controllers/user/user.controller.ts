@@ -24,7 +24,7 @@ import {
   UserFindByIdUseCase,
   UserUpdateUseCase,
 } from 'src/use-cases/user';
-import { AuthGuard } from 'src/utilities/guards/authGuard';
+import { AuthGuard } from 'src/utilities/guards';
 
 @ApiTags('User')
 @ApiBearerAuth()

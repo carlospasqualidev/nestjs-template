@@ -19,6 +19,11 @@ export class UserRepository implements IUserRepository {
       data: {
         ...data,
         password,
+        permissions: {
+          create: {
+            permission: 'user',
+          },
+        },
       },
     });
     return user;

@@ -13,11 +13,13 @@ export class UserUpdateDTO {
   @IsNotEmpty({ message: 'O nome é obrigatório' })
   name: string;
 
-  @IsString()
-  @IsEmail()
+  @IsString({
+    message: 'O e-mail deve ser uma string.',
+  })
+  @IsEmail({}, { message: 'O e-mail deve ser válido.' })
   email: string;
 
-  @IsString()
+  @IsString({ message: 'A imagem deve ser uma url do tipo string.' })
   @IsOptional()
   image?: string | null;
 }

@@ -74,6 +74,20 @@ export class UserPermissionRepository implements IUserPermissionRepository {
     return userPermission;
   }
 
+  async findManyByUserId(id: string): Promise<$Enums.Permissions[]> {
+    const userPermissionsBase = await prisma.userPermission.findMany({
+      where: {
+        userId: id,
+      },
+    });
+
+    const userPermissions = userPermissionsBase.map(
+      (permission) => permission.permission,
+    );
+
+    return userPermissions;
+  }
+
   //#endregion
 
   //#region DELETE

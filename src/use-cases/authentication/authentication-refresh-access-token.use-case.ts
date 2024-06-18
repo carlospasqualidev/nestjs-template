@@ -23,6 +23,6 @@ export class AuthenticationRefreshAccessTokenUseCase {
 
     const accessToken = jwt.signAccessToken(newPayload);
 
-    return { accessToken };
+    return { accessToken: `Bearer ${accessToken}` };
   }
 }
