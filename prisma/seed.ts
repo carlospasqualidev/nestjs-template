@@ -10,7 +10,21 @@ const main = async () => {
   };
 
   await prisma.user.upsert({
-    create: data,
+    create: {
+      ...data,
+      permissions: {
+        createMany: {
+          data: [
+            {
+              permission: 'admin',
+            },
+            {
+              permission: 'user',
+            },
+          ],
+        },
+      },
+    },
     update: data,
     where: {
       email: data.email,

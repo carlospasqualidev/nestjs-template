@@ -4,6 +4,7 @@ import {
   IUpdateRefreshToken,
   IUserRepository,
   IFindOptions,
+  IFindManyOptions,
 } from './user-repository.interface';
 import { prisma } from 'src/utilities/database';
 import { UserUpdateDTO } from 'src/dtos/user';
@@ -58,6 +59,21 @@ export class UserRepository implements IUserRepository {
       throw new NotFoundException('Usuário não encontrado na base de dados.');
 
     return user;
+  }
+
+  async findMany({
+    page,
+    take,
+  }: IFindManyOptions): Promise<{ users: UserEntity[]; count: number } | []> {
+    const [users, count] = await prisma.$transaction([
+      prisma.user.findMany({
+        take,
+        skip: (page - 1) * take,
+      }),
+      prisma.user.count(),
+    ]);
+
+    return { users, count };
   }
   //#endregion
 

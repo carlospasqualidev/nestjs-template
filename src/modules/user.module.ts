@@ -5,6 +5,7 @@ import {
   UserFindByIdUseCase,
   UserUpdateUseCase,
   UserDeleteByIdUseCase,
+  UserFindManyUseCase,
 } from 'src/use-cases/user';
 import { Module } from '@nestjs/common';
 
@@ -15,6 +16,7 @@ import { Module } from '@nestjs/common';
     UserUpdateUseCase,
     UserFindByIdUseCase,
     UserDeleteByIdUseCase,
+    UserFindManyUseCase,
   ],
   controllers: [UserController],
 })

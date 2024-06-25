@@ -16,7 +16,7 @@ class EnvCore {
   public get(key: envVars): any {
     const value = process.env[key];
 
-    if (!value) throw new Error(`Environment variable ${key} not found`);
+    if (!value) throw new Error(`Environment variable ${key} not found.`);
     return process.env[key];
   }
 }

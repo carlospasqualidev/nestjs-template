@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Inject, Post, Req } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  Inject,
+  Post,
+  Req,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { FastifyRequest } from 'fastify';
 
@@ -24,9 +32,9 @@ export class AuthenticationController {
   private readonly authenticationLogoutUseCase: AuthenticationLogoutUseCase;
 
   @Post('/login')
+  @HttpCode(200)
   @ApiResponse({
     status: 200,
-    description: 'Success',
     type: AuthenticationReturnDTO,
   })
   async Login(@Body() dto: AuthenticationDTO) {
@@ -36,7 +44,6 @@ export class AuthenticationController {
   @Get('/logout')
   @ApiResponse({
     status: 200,
-    description: 'Success',
   })
   @ApiBearerAuth()
   async Logout(@Req() req: FastifyRequest) {
@@ -46,7 +53,6 @@ export class AuthenticationController {
   @Get('/refresh')
   @ApiResponse({
     status: 200,
-    description: 'Success',
     type: AuthenticationReturnDTO,
   })
   @ApiBearerAuth()

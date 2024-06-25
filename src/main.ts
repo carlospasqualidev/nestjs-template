@@ -28,7 +28,7 @@ async function configureApi() {
   //#ENDREGION
 
   //#REGION VALIDATION PIPE FOR CLASS VALIDATOR
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(new ValidationPipe({ transform: true }));
   app.useGlobalPipes(new TrimPipe());
   //#ENDREGION
 
