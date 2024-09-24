@@ -1,7 +1,7 @@
 import { JwtService } from '@nestjs/jwt';
 import { FastifyRequest } from 'fastify';
 import { UnauthorizedException } from '@nestjs/common';
-import { IToken } from './jwt.interface';
+
 import { env } from 'src/infrastructure/config/env';
 
 export class Jwt {
@@ -15,26 +15,22 @@ export class Jwt {
     return this.sign(payload, '30d');
   }
 
-  public verify(token: string): IToken {
+  public verify<T>(token: string): T {
     try {
-      this.jwtService.verify(token, {
+      const payload = this.jwtService.verify(token, {
         secret: env.get('JWT_SECRET'),
       });
+      return payload as T;
     } catch (error) {
       throw new UnauthorizedException('Token inválido.');
     }
-
-    return this.decode(token);
   }
 
-  public decode(token: string): IToken {
-    const payload = this.jwtService.decode(token) as IToken;
-
-    if (!payload || !payload.user || !payload.user.id) {
-      throw new UnauthorizedException('Token inválido.');
-    }
-
-    return payload;
+  public sign(payload: any, expiresIn: string) {
+    return this.jwtService.sign(payload, {
+      expiresIn,
+      secret: env.get('JWT_SECRET'),
+    });
   }
 
   public extractTokenFromHeader(request: FastifyRequest): string | undefined {
@@ -52,13 +48,6 @@ export class Jwt {
       );
 
     return token;
-  }
-
-  public sign(payload: any, expiresIn: string) {
-    return this.jwtService.sign(payload, {
-      expiresIn,
-      secret: env.get('JWT_SECRET'),
-    });
   }
 }
 

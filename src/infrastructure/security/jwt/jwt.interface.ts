@@ -1,4 +1,4 @@
-export interface IToken {
+export interface IAuthorizationToken  {
   user: {
     id: string;
   };

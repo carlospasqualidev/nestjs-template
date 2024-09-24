@@ -1,1 +1,8 @@
-export * from './confirmationTemplateForRegistration';
+export {
+  registerConfirmationTemplate,
+  IRegisterConfirmationTemplate,
+} from './registerConfirmationTemplate';
+export {
+  accessUpdatePasswordTemplate,
+  IAccessUpdatePasswordTemplate,
+} from './accessUpdatePasswordTemplate';

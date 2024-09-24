@@ -1,7 +1,12 @@
+// IMPORTS
 import { Inject, Injectable } from '@nestjs/common';
-import { jwt } from 'src/infrastructure/security/jwt';
+import { jwt, IAuthorizationToken } from 'src/infrastructure/security/jwt';
 import { FastifyRequest } from 'fastify';
-import { IUserRepository } from 'src/domain/repositories';
+//#endregion
+
+//#REGION REPOSITORIES
+import { IUserRepository } from 'src/domain/user';
+//#endregion
 
 @Injectable()
 export class AccessLogoutUseCase {
@@ -9,9 +14,13 @@ export class AccessLogoutUseCase {
   private readonly userRepository: IUserRepository;
 
   public async execute(req: FastifyRequest) {
-    const payload = jwt.decode(jwt.extractTokenFromHeader(req));
+    const payload = jwt.verify<IAuthorizationToken>(
+      jwt.extractTokenFromHeader(req),
+    );
 
-    const user = await this.userRepository.findById(payload.user.id);
+    const user = await this.userRepository.findRefreshTokenById({
+      id: payload.user.id,
+    });
 
     jwt.verify(user.refreshToken);
 

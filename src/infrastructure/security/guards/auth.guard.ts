@@ -4,7 +4,7 @@ import {
   ForbiddenException,
   Type,
 } from '@nestjs/common';
-import { jwt } from '../jwt';
+import { IAuthorizationToken, jwt } from '../jwt';
 import { enums } from 'src/infrastructure/database/prisma';
 import { UserPermissionRepository } from 'src/infrastructure/database/prisma/repositories/user-permission.repository';
 
@@ -18,7 +18,7 @@ export function AuthGuard(
       const request = context.switchToHttp().getRequest();
 
       const token = jwt.extractTokenFromHeader(request);
-      const payload = jwt.verify(token);
+      const payload = jwt.verify<IAuthorizationToken>(token);
 
       const userPermissions = await userPermissionRepository.findManyByUserId(
         payload.user.id,

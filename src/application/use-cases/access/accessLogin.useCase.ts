@@ -1,9 +1,17 @@
+// IMPORTS
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
-import { AccessDTO } from 'src/application/dtos/access/access.dto';
-import { UserEntity } from 'src/domain/entities';
-import { IUserRepository } from 'src/domain/repositories';
+import { jwt } from 'src/infrastructure/security/jwt';
 import { cryptography } from 'src/infrastructure/security/cryptography';
-import { jwt } from 'src/infrastructure/security/jwt/jwt';
+//#endregion
+
+//#region DTOS
+import { AccessDTO } from 'src/application/dtos/access/access.dto';
+import { UserFindPasswordByIdOrEmailReturnDTO } from 'src/application/dtos/user';
+//#endregion
+
+//#REGION REPOSITORIES
+import { IUserRepository } from 'src/domain/user';
+//#endregions
 
 @Injectable()
 export class AccessLoginUseCase {
@@ -11,9 +19,12 @@ export class AccessLoginUseCase {
   private readonly userRepository: IUserRepository;
 
   public async execute(dto: AccessDTO) {
-    const user = await this.userRepository.findByEmail(dto.email, {
-      validate: false,
-    });
+    const user = await this.userRepository.findPasswordByIdOrEmail(
+      { email: dto.email },
+      {
+        validate: false,
+      },
+    );
 
     await this.checkPasswordMatch(dto.password, user);
 
@@ -29,7 +40,10 @@ export class AccessLoginUseCase {
     return { accessToken: `Bearer ${accessToken}` };
   }
 
-  private async checkPasswordMatch(password: string, user: UserEntity) {
+  private async checkPasswordMatch(
+    password: string,
+    user: UserFindPasswordByIdOrEmailReturnDTO,
+  ) {
     if (!user) {
       throw new UnauthorizedException('Credenciais inválidas.');
     }
@@ -44,7 +58,10 @@ export class AccessLoginUseCase {
     }
   }
 
-  private async handleRefreshToken(user: UserEntity, payload: any) {
+  private async handleRefreshToken(
+    user: UserFindPasswordByIdOrEmailReturnDTO,
+    payload: any,
+  ) {
     const refreshToken = jwt.signRefreshToken(payload);
 
     await this.userRepository.updateRefreshToken({

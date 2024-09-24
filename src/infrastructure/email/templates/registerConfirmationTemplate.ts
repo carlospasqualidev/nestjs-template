@@ -1,4 +1,12 @@
-export function confirmationTemplateForRegistration(token: string) {
+export interface IRegisterConfirmationTemplate {
+  toEmail: string;
+  token: string;
+  redirectUrl: string;
+}
+
+export function registerConfirmationTemplate(
+  params: IRegisterConfirmationTemplate,
+) {
   return `<div style="background-size: cover; background: #ededed; padding: 24px;">
     <div
       style="
@@ -16,7 +24,7 @@ export function confirmationTemplateForRegistration(token: string) {
 
         <p>
           <strong>Token: </strong>
-          ${process.env.CLIENT_URL}/register/${token}
+          ${params.redirectUrl}/${params.token}
         </p>
       </div>
     </div>

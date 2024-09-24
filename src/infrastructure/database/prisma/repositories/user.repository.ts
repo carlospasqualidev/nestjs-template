@@ -1,26 +1,72 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { UserEntity } from 'src/domain/entities';
+//#region IMPORTS
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+  Inject,
+} from '@nestjs/common';
 
 import { prisma } from 'src/infrastructure/database/prisma';
-import { UserUpdateDTO } from 'src/application/dtos/user';
-import { cryptography } from 'src/infrastructure/security/cryptography';
-import { IUserRepository } from 'src/domain/repositories';
+import { ErrorCollector } from 'src/utilities/error';
+//#endregion
+
+//#region DTOS
+import {
+  UserCreateDTO,
+  UserCreateReturnDTO,
+  UserDeleteByIdDTO,
+  UserFindByIdDTO,
+  UserFindRefreshTokenByIdReturnDTO,
+  UserFindByIdReturnDTO,
+  UserUpdateDTO,
+  UserFindPasswordByIdOrEmailDTO,
+  UserFindPasswordByIdOrEmailReturnDTO,
+} from 'src/application/dtos/user';
+
+//#endregion
+
+//#region DOMAIN
+import {
+  UserEntity,
+  IUpdatePassword,
+  IUpdateRefreshToken,
+  IUserRepository,
+} from 'src/domain/user';
+
 import {
   IFindOptions,
   ITakeAndPage,
-} from 'src/domain/repositories/generics-repository.interface';
-import { IUpdateRefreshToken } from 'src/domain/repositories/user-repository.interface';
+  IFindManyReturn,
+} from 'src/domain/generic';
+//#endregion
 
 @Injectable()
 export class UserRepository implements IUserRepository {
-  //#region CREATE
-  async create(data: UserEntity): Promise<UserEntity> {
-    const password = await cryptography.hashPassword(data.password);
+  @Inject()
+  private errorCollector: ErrorCollector;
 
+  //#region CREATE
+  async create(dto: UserCreateDTO): Promise<UserCreateReturnDTO> {
+    const otherUserWithEqualEmail = await this.findByEmail(dto.email, {
+      validate: false,
+    });
+
+    if (otherUserWithEqualEmail) {
+      this.errorCollector.add('Informe um email válido.');
+    }
+
+    const newUser = new UserEntity(dto);
+    const errors = await newUser.validatePassword(dto.confirmPassword);
+    this.errorCollector.add(errors);
+    this.errorCollector.throwIfAny();
+
+    await newUser.hashPassword();
     const user = await prisma.user.create({
       data: {
-        ...data,
-        password,
+        name: newUser.name,
+        email: newUser.email,
+        password: newUser.password,
+        image: newUser.image,
         permissions: {
           create: {
             permission: 'user',
@@ -28,18 +74,19 @@ export class UserRepository implements IUserRepository {
         },
       },
     });
+
     return user;
   }
   //#endregion
 
   //#region FIND
   async findById(
-    id: string,
+    dto: UserFindByIdDTO,
     options: IFindOptions = { validate: true },
-  ): Promise<UserEntity | undefined> {
+  ): Promise<UserFindByIdReturnDTO | null> {
     const user = await prisma.user.findUnique({
       where: {
-        id,
+        id: dto.id,
       },
     });
 
@@ -49,7 +96,10 @@ export class UserRepository implements IUserRepository {
     return user;
   }
 
-  async findByEmail(email: string, options: IFindOptions = { validate: true }) {
+  async findByEmail(
+    email: string,
+    options: IFindOptions = { validate: true },
+  ): Promise<UserFindByIdReturnDTO | null> {
     const user = await prisma.user.findUnique({
       where: {
         email,
@@ -62,24 +112,67 @@ export class UserRepository implements IUserRepository {
     return user;
   }
 
-  async findMany({
-    page,
-    take,
-  }: ITakeAndPage): Promise<{ users: UserEntity[]; count: number } | []> {
-    const [users, count] = await prisma.$transaction([
+  async findRefreshTokenById(
+    dto: UserFindByIdDTO,
+    options: IFindOptions = { validate: true },
+  ): Promise<UserFindRefreshTokenByIdReturnDTO | null> {
+    const user = await prisma.user.findUnique({
+      select: {
+        id: true,
+        refreshToken: true,
+      },
+      where: {
+        id: dto.id,
+      },
+    });
+
+    if (options.validate && !user)
+      throw new NotFoundException('Usuário não encontrado na base de dados.');
+
+    return user;
+  }
+
+  async findPasswordByIdOrEmail(
+    dto: UserFindPasswordByIdOrEmailDTO,
+    options: IFindOptions = { validate: true },
+  ): Promise<UserFindPasswordByIdOrEmailReturnDTO | null> {
+    if (!dto.id && !dto.email)
+      throw new BadRequestException('Informe o id ou email do usuário.');
+
+    const where = dto.id ? { id: dto.id } : { email: dto.email };
+
+    const user = await prisma.user.findUnique({
+      select: {
+        id: true,
+        password: true,
+      },
+
+      where,
+    });
+
+    if (options.validate && !user)
+      throw new NotFoundException('Usuário não encontrado na base de dados.');
+
+    return user;
+  }
+
+  async findMany(filters: ITakeAndPage): Promise<IFindManyReturn<UserEntity>> {
+    const [data, count] = await prisma.$transaction([
       prisma.user.findMany({
-        take,
-        skip: (page - 1) * take,
+        take: filters.take,
+        skip: (filters.page - 1) * filters.take,
       }),
       prisma.user.count(),
     ]);
 
-    return { users, count };
+    return { data, count };
   }
   //#endregion
 
   //#region UPDATE
   async update(data: UserUpdateDTO): Promise<UserEntity> {
+    await this.findById({ id: data.id });
+
     const user = await prisma.user.update({
       data,
       where: {
@@ -90,16 +183,42 @@ export class UserRepository implements IUserRepository {
     return user;
   }
 
-  async updateRefreshToken({
-    userId,
-    refreshToken,
-  }: IUpdateRefreshToken): Promise<void> {
+  async updateRefreshToken(data: IUpdateRefreshToken): Promise<void> {
+    await this.findById({ id: data.userId });
+
     await prisma.user.update({
       data: {
-        refreshToken,
+        refreshToken: data.refreshToken,
       },
       where: {
-        id: userId,
+        id: data.userId,
+      },
+    });
+  }
+
+  async updatePassword(dto: IUpdatePassword): Promise<void> {
+    const user = await prisma.user.findUnique({
+      where: {
+        id: dto.id,
+      },
+    });
+
+    const newUser = new UserEntity(user);
+    newUser.password = dto.password;
+    const isInvalid = await newUser.validatePassword(dto.confirmPassword);
+
+    if (isInvalid) {
+      throw new BadRequestException(isInvalid);
+    }
+
+    await newUser.hashPassword();
+
+    await prisma.user.update({
+      data: {
+        password: newUser.password,
+      },
+      where: {
+        id: dto.id,
       },
     });
   }
@@ -107,10 +226,12 @@ export class UserRepository implements IUserRepository {
   //#endregion
 
   //#region DELETE
-  async delete(id: string) {
+  async deleteById(dto: UserDeleteByIdDTO): Promise<void> {
+    await this.findById(dto);
+
     await prisma.user.delete({
       where: {
-        id,
+        id: dto.id,
       },
     });
   }

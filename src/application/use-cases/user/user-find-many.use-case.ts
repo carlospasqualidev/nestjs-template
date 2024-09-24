@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { UserFindManyDTO } from 'src/application/dtos/user';
-import { IUserRepository } from 'src/domain/repositories';
+import { IUserRepository } from 'src/domain/user';
 
 @Injectable()
 export class UserFindManyUseCase {

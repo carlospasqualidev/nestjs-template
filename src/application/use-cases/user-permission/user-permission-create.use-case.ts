@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 
 import { UserPermissionCreateDTO } from 'src/application/dtos/user-permission';
-import { UserPermissionEntity } from 'src/domain/entities/user-permission.entity';
-import { IUserPermissionRepository } from 'src/domain/repositories';
+import { IUserPermissionRepository } from 'src/domain/userPermission';
+import { UserPermissionEntity } from 'src/domain/userPermission/user-permission.entity';
 
 @Injectable()
 export class UserPermissionCreateUseCase {

@@ -1,4 +1,6 @@
+//#region ENUMS
 import { enums } from 'src/infrastructure/database/prisma';
+// #endregion
 
 export class UserPermissionEntity {
   id?: string;

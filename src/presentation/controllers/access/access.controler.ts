@@ -1,4 +1,4 @@
-// IMPORTS
+//#region IMPORTS
 import {
   Body,
   Controller,
@@ -12,45 +12,40 @@ import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { FastifyRequest } from 'fastify';
 //#endregion
 
-//#REGION DTOS
+//#region DTOS
 import {
   AccessDTO,
-  AccessSendEmailForRegistrationDTO,
   AccessReturnDTO,
+  AccessUpdatePasswordDTO,
+  AccessSendEmailForUpdatePasswordDTO,
 } from 'src/application/dtos/access';
 //#endregion
 
-//#REGION USE CASES
+//#region USE CASES
 import {
   AccessLoginUseCase,
   AccessLogoutUseCase,
   AccessRefreshAccessTokenUseCase,
-  AccessSendEmailForRegistrationUseCase,
+  AccessUpdatePasswordUseCase,
+  AccessSendEmailForUpdatePasswordUseCase,
 } from 'src/application/use-cases/access';
-//#endregions
+//#endregion
 
-@ApiTags('Authentication')
+@ApiTags('Access')
 @Controller()
 export class AccessController {
   //#region INJECTS
-  @Inject(AccessSendEmailForRegistrationUseCase)
-  private readonly accessSendEmailForRegistrationUseCase: AccessSendEmailForRegistrationUseCase;
   @Inject(AccessLoginUseCase)
   private readonly accessLoginUseCase: AccessLoginUseCase;
   @Inject(AccessLogoutUseCase)
   private readonly accessLogoutUseCase: AccessLogoutUseCase;
   @Inject(AccessRefreshAccessTokenUseCase)
   private readonly accessRefreshAccessTokenUseCase: AccessRefreshAccessTokenUseCase;
+  @Inject(AccessSendEmailForUpdatePasswordUseCase)
+  private readonly accessSendEmailForUpdatePasswordUseCase: AccessSendEmailForUpdatePasswordUseCase;
+  @Inject(AccessUpdatePasswordUseCase)
+  private readonly accessUpdatePasswordUseCase: AccessUpdatePasswordUseCase;
   //#endregion
-
-  @HttpCode(200)
-  @ApiResponse({
-    status: 200,
-  })
-  @Post('/send-email-for-registration')
-  async Create(@Body() dto: AccessSendEmailForRegistrationDTO) {
-    return this.accessSendEmailForRegistrationUseCase.execute(dto);
-  }
 
   @Post('/login')
   @HttpCode(200)
@@ -60,6 +55,20 @@ export class AccessController {
   })
   async Login(@Body() dto: AccessDTO) {
     return this.accessLoginUseCase.execute(dto);
+  }
+
+  @Post('/update-password')
+  @HttpCode(200)
+  async UpdatePassword(@Body() dto: AccessUpdatePasswordDTO) {
+    return this.accessUpdatePasswordUseCase.execute(dto);
+  }
+
+  @Post('/send-update-password-email')
+  @HttpCode(200)
+  async SendUpdatePasswordEmail(
+    @Body() dto: AccessSendEmailForUpdatePasswordDTO,
+  ) {
+    return this.accessSendEmailForUpdatePasswordUseCase.execute(dto);
   }
 
   @Get('/logout')

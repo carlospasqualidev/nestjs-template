@@ -10,7 +10,7 @@ import { HttpAdapterHost } from '@nestjs/core';
 import { IErrorMessage } from './expection-filter.interface';
 import { dateTime } from '../../../../utilities/date-time';
 import { Prisma } from '@prisma/client';
-import { registerErrorLog } from 'src/utilities/error';
+import { ErrorCollector, registerErrorLog } from 'src/utilities/error';
 
 @Catch()
 export class ExceptionsFilter implements ExceptionFilter {
@@ -21,12 +21,16 @@ export class ExceptionsFilter implements ExceptionFilter {
 
     const { getRequest, getResponse } = host.switchToHttp();
 
-    let responseBody = this.responseBody(exception);
+    let responseBody: IErrorMessage = this.responseBody(exception);
 
-    const isHttpException = exception instanceof HttpException;
-
-    if (isHttpException) {
+    if (exception instanceof HttpException) {
       responseBody = exception.getResponse() as IErrorMessage;
+    } else if (exception instanceof ErrorCollector) {
+      responseBody = {
+        message: exception.getAll(),
+        error: 'Bad Request',
+        statusCode: HttpStatus.BAD_REQUEST,
+      };
     } else {
       this.showMessage(exception, getRequest());
     }

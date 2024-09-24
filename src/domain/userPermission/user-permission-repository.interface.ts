@@ -1,6 +1,11 @@
+// #region ENUMS
 import { enums } from 'src/infrastructure/database/prisma';
-import { UserPermissionEntity } from '../entities/user-permission.entity';
-import { IFindOptions } from './generics-repository.interface';
+// #endregion
+
+// #region DOMAIN
+import { UserPermissionEntity } from './user-permission.entity';
+import { IFindOptions } from '../generic';
+// #endregion
 
 export interface IUserPermissionRepository {
   create(permission: UserPermissionEntity): Promise<UserPermissionEntity>;

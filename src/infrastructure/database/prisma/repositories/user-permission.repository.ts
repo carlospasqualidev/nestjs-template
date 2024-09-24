@@ -1,11 +1,10 @@
 import { enums, prisma } from 'src/infrastructure/database/prisma';
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import {
-  IUserPermissionRepository,
-  IUserRepository,
-} from 'src/domain/repositories';
-import { UserPermissionEntity } from 'src/domain/entities/user-permission.entity';
-import { IFindOptions } from 'src/domain/repositories/generics-repository.interface';
+
+import { UserPermissionEntity } from 'src/domain/userPermission/user-permission.entity';
+import { IFindOptions } from 'src/domain/generic';
+import { IUserRepository } from 'src/domain/user';
+import { IUserPermissionRepository } from 'src/domain/userPermission';
 
 @Injectable()
 export class UserPermissionRepository implements IUserPermissionRepository {
@@ -16,7 +15,7 @@ export class UserPermissionRepository implements IUserPermissionRepository {
   async create(
     permission: UserPermissionEntity,
   ): Promise<UserPermissionEntity> {
-    await this.userRepository.findById(permission.userId);
+    await this.userRepository.findById({ id: permission.userId });
     await this.validatePermission(permission.permission);
     await this.checkPermissionAlreadyExists(permission);
 

@@ -15,7 +15,8 @@ import {
   AccessLoginUseCase,
   AccessLogoutUseCase,
   AccessRefreshAccessTokenUseCase,
-  AccessSendEmailForRegistrationUseCase,
+  AccessUpdatePasswordUseCase,
+  AccessSendEmailForUpdatePasswordUseCase,
 } from 'src/application/use-cases/access';
 //#endregions
 
@@ -26,7 +27,8 @@ import {
     AccessLoginUseCase,
     AccessLogoutUseCase,
     AccessRefreshAccessTokenUseCase,
-    AccessSendEmailForRegistrationUseCase,
+    AccessUpdatePasswordUseCase,
+    AccessSendEmailForUpdatePasswordUseCase,
     {
       provide: 'IUserRepository',
       useClass: UserRepository,

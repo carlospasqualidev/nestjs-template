@@ -1,5 +1,8 @@
+//#region IMPORTS
 import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+
+//#endregion
 
 export class AccessDTO {
   @IsString({ message: 'O email deve ser uma string.' })
