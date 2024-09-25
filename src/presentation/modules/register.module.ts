@@ -3,7 +3,7 @@ import { Module } from '@nestjs/common';
 //#endregion
 
 //#REGION REPOSITORIES
-import { UserRepository } from 'src/infrastructure/database/prisma/repositories/user.repository';
+import { UserRepository } from 'src/infrastructure/database/prisma/repositories';
 //#endregion
 
 //#REGION CONTROLLERS
